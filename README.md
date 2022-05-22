@@ -27,7 +27,7 @@
 <img src="https://img.shields.io/badge/Kali--0?style=social&logo=Kali%20Linux&logoColor=E95420"/>
 </p>
 <p align="center">
-<img src="https://img.shields.io/badge/Arduino--0?style=social&logo=Arduino&logoColor=00979D"/>
+
 </p>
 
 ### 🔧常用的工具或软件
@@ -45,6 +45,7 @@
 
 <p align="center">
 <img src="https://img.shields.io/badge/Chrome-浏览器-4285F4?style=flat-square&logo=Google%20Chrome&labelColor=ffffff&logoColor=4285F4"/>
+<img src="https://img.shields.io/badge/Firefox-浏览器-20123A?style=flat-square&logo=Firefox%20Firefox&labelColor=ffffff&logoColor=20123A"/>
 <img src="https://img.shields.io/badge/Edge-浏览器-0078D7?style=flat-square&logo=Microsoft%20Edge&labelColor=ffffff&logoColor=0078D7"/>
 </p>
 
