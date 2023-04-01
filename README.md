@@ -1,4 +1,6 @@
-[![github-profile](https://files.catbox.moe/858ipw.svg)](https://www.calligrapher.ai/)
+[![github-profile](https://files.catbox.moe/y2j7f9.svg)](https://www.calligrapher.ai/)
+
+# 👋 Hey there
 
 ![](https://count.getloli.com/get/@mijaclan?theme=rule34)
 
