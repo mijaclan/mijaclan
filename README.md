@@ -65,3 +65,7 @@
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | ![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=mijaclan) | ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=mijaclan&&hide=tsql) |
 
+
+<!--START_SECTION:waka-->
+<!--END_SECTION:waka-->
+
