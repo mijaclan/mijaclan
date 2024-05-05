@@ -1,0 +1,8 @@
+
+参考项目：https://github.com/anmol098/waka-readme-stats
+
+1. 修改wakatime key： setting > Action
+2. 官网获取最新token key： https://wakatime.com/settings/account
+
+github token 在profile下修改和获取
+
