@@ -67,15 +67,11 @@
 
 
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-708%20hrs%2033%20mins-blue)
-
 ![Profile Views](http://img.shields.io/badge/Profile%20Views-0-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 ? Used in GitHub's Storage 
- > 
-> 🏆 318 Contributions in the Year 2024
  > 
 > 🚫 Not Opted to Hire
  > 
@@ -83,45 +79,6 @@
  > 
 > 🔑 0 Private Repositories 
  > 
-**I'm an Early 🐤** 
-
-```text
-🌞 Morning                625 commits         ████████████░░░░░░░░░░░░░   47.38 % 
-🌆 Daytime                230 commits         ████░░░░░░░░░░░░░░░░░░░░░   17.44 % 
-🌃 Evening                155 commits         ███░░░░░░░░░░░░░░░░░░░░░░   11.75 % 
-🌙 Night                  309 commits         ██████░░░░░░░░░░░░░░░░░░░   23.43 % 
-```
-📅 **I'm Most Productive on Monday** 
-
-```text
-Monday                   285 commits         █████░░░░░░░░░░░░░░░░░░░░   21.61 % 
-Tuesday                  218 commits         ████░░░░░░░░░░░░░░░░░░░░░   16.53 % 
-Wednesday                119 commits         ██░░░░░░░░░░░░░░░░░░░░░░░   09.02 % 
-Thursday                 115 commits         ██░░░░░░░░░░░░░░░░░░░░░░░   08.72 % 
-Friday                   150 commits         ███░░░░░░░░░░░░░░░░░░░░░░   11.37 % 
-Saturday                 176 commits         ███░░░░░░░░░░░░░░░░░░░░░░   13.34 % 
-Sunday                   256 commits         █████░░░░░░░░░░░░░░░░░░░░   19.41 % 
-```
-
-
-📊 **This Week I Spent My Time On** 
-
-```text
-🕑︎ Time Zone: Asia/Shanghai
-
-💬 Programming Languages: 
-No Activity Tracked This Week
-
-🔥 Editors: 
-No Activity Tracked This Week
-
-🐱‍💻 Projects: 
-No Activity Tracked This Week
-
-💻 Operating System: 
-No Activity Tracked This Week
-```
-
 **I Mostly Code in JavaScript** 
 
 ```text
@@ -135,6 +92,6 @@ Rust                     1 repo              █░░░░░░░░░░�
 
 
 
- Last Updated on 02/11/2024 18:41:53 UTC
+ Last Updated on 03/11/2024 18:43:00 UTC
 <!--END_SECTION:waka-->
 
