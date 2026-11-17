@@ -5,8 +5,7 @@
 </picture>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=19&pause=1100&color=0969DA&center=true&vCenter=true&width=660&lines=%E5%88%AB%E4%BA%BA%E5%8A%A0%E7%8F%AD%EF%BC%8C%E6%88%91%E5%8A%A0+agent;%E5%AE%83%E8%B7%91%E8%85%BF%EF%BC%8C%E6%88%91%E6%8B%8D%E6%9D%BF;%E5%85%88%E8%B7%91%E9%80%9A%EF%BC%8C%E5%86%8D%E4%BC%98%E9%9B%85;AI+%E5%B9%B2%E6%B4%BB%EF%BC%8C%E6%88%91%E8%83%8C%E9%94%85%EF%BC%88%E4%B8%8D%E6%98%AF%EF%BC%89#gh-light-mode-only" alt="typing" />
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=19&pause=1100&color=3DA9FC&center=true&vCenter=true&width=660&lines=%E5%88%AB%E4%BA%BA%E5%8A%A0%E7%8F%AD%EF%BC%8C%E6%88%91%E5%8A%A0+agent;%E5%AE%83%E8%B7%91%E8%85%BF%EF%BC%8C%E6%88%91%E6%8B%8D%E6%9D%BF;%E5%85%88%E8%B7%91%E9%80%9A%EF%BC%8C%E5%86%8D%E4%BC%98%E9%9B%85;AI+%E5%B9%B2%E6%B4%BB%EF%BC%8C%E6%88%91%E8%83%8C%E9%94%85%EF%BC%88%E4%B8%8D%E6%98%AF%EF%BC%89#gh-dark-mode-only" alt="typing" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=19&pause=1100&color=1F6FEB&center=true&vCenter=true&width=660&lines=%E5%88%AB%E4%BA%BA%E5%8A%A0%E7%8F%AD%EF%BC%8C%E6%88%91%E5%8A%A0+agent;%E5%AE%83%E8%B7%91%E8%85%BF%EF%BC%8C%E6%88%91%E6%8B%8D%E6%9D%BF;%E5%85%88%E8%B7%91%E9%80%9A%EF%BC%8C%E5%86%8D%E4%BC%98%E9%9B%85;AI+%E5%B9%B2%E6%B4%BB%EF%BC%8C%E6%88%91%E8%83%8C%E9%94%85%EF%BC%88%E4%B8%8D%E6%98%AF%EF%BC%89" alt="typing" />
 </p>
 
 <p align="center">
@@ -171,13 +170,11 @@ Run anmol098/waka-readme-stats@master
 > 数字放在最后是有原因的：它不会骗人，但它也不会解释自己。
 
 <p align="center">
-  <img src="https://streak-stats.demolab.com?user=mijaclan&theme=default&hide_border=true&locale=en#gh-light-mode-only" alt="streak" />
-  <img src="https://streak-stats.demolab.com?user=mijaclan&theme=github-dark-blue&hide_border=true&locale=en#gh-dark-mode-only" alt="streak" />
+  <img src="https://streak-stats.demolab.com?user=mijaclan&theme=default&hide_border=true&locale=en" alt="streak" />
 </p>
 
 <p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=mijaclan&theme=github#gh-light-mode-only" alt="GitHub 统计总览" />
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=mijaclan&theme=github_dark#gh-dark-mode-only" alt="GitHub 统计总览" />
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=mijaclan&theme=github" alt="GitHub 统计总览" />
 </p>
 
 <sub>↓ 下面这段由 GitHub Actions 每天自动抓 WakaTime 生成，人工零干预——包括它给我统计出我是个早鸟这件事。</sub>
