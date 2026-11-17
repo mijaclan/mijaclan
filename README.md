@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <code>🐤 早鸟型选手</code>&nbsp;<code>🧯 CI 拆弹</code>&nbsp;<code>🤖 Agent 派活</code>&nbsp;<code>🧧 信创双栈</code>&nbsp;<code>🌏 Asia/Shanghai</code>
+  <code>🐤 早鸟型选手</code>&nbsp;<code>🧯 CI 拆弹</code>&nbsp;<code>🤖 Agent 派活</code>&nbsp;<code>🐼 信创双栈</code>&nbsp;<code>🌏 Asia/Shanghai</code>
 </p>
 
 白天给产品写功能，晚上给 agent 写 prompt。两件事的共同点：**都得能被验收**。
@@ -138,7 +138,7 @@ Run anmol098/waka-readme-stats@master
 
 ---
 
-## 🧧 国产栈，我不是"听说过"
+## 🐼 国产栈，我不是"听说过"
 
 > 第一次接信创项目，我以为把 `mysql` 换成 `dm`、`cuda` 换成 `cann` 就完事了。结果第一周我在 glibc 版本上卡了三天。
 
