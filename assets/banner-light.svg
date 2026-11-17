@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="mijaclan — 我不生产代码，我只是 AI 的甲方">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.6" stop-color="#F4F7FB"/>
+      <stop offset="1" stop-color="#E4EEF8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.88" cy="0.02" r="0.8">
+      <stop offset="0" stop-color="#0EA5E9" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#0EA5E9" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#64748B" fill-opacity="0.18"/>
+    </pattern>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0284C7"/>
+      <stop offset="1" stop-color="#0EA5E9" stop-opacity="0.25"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <rect width="1200" height="300" fill="url(#dots)"/>
+  <rect width="1200" height="300" fill="url(#glow)"/>
+
+  <!-- 右侧装饰：轨道环 + 光点 -->
+  <g fill="none" stroke="#0284C7" stroke-opacity="0.16" stroke-width="1.4">
+    <circle cx="1020" cy="150" r="118"/>
+    <circle cx="1020" cy="150" r="84"/>
+    <circle cx="1020" cy="150" r="50"/>
+  </g>
+  <circle cx="1020" cy="150" r="15" fill="#0284C7" fill-opacity="0.85"/>
+  <circle cx="1020" cy="150" r="26" fill="none" stroke="#0284C7" stroke-opacity="0.45" stroke-width="1.4"/>
+  <circle cx="1102" cy="68" r="5" fill="#0EA5E9" fill-opacity="0.85"/>
+  <circle cx="938" cy="234" r="4" fill="#0284C7" fill-opacity="0.6"/>
+  <circle cx="1150" cy="196" r="3" fill="#475569" fill-opacity="0.45"/>
+
+  <!-- 左侧内容 -->
+  <rect x="64" y="96" width="5" height="112" rx="2.5" fill="url(#bar)"/>
+
+  <text x="90" y="106" font-family="'SF Mono','JetBrains Mono',Consolas,Menlo,monospace" font-size="14" letter-spacing="3.6" fill="#7C8DA1">PROFILE · 2026 · ASIA/SHANGHAI</text>
+
+  <text x="88" y="178" font-family="-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="82" font-weight="800" letter-spacing="-1.5" fill="#0F172A">mijaclan</text>
+
+  <text x="90" y="226" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,'Segoe UI',sans-serif" font-size="24" fill="#0369A1">我不生产代码，我只是 AI 的甲方。</text>
+
+  <!-- 标签 -->
+  <g font-family="-apple-system,'Segoe UI',Arial,sans-serif" font-size="13.5" fill="#1E4A6B">
+    <rect x="88" y="250" width="106" height="30" rx="15" fill="#E6EFF9" stroke="#C3D9EE" stroke-width="1"/>
+    <text x="141" y="269.5" text-anchor="middle">TypeScript</text>
+    <rect x="206" y="250" width="62" height="30" rx="15" fill="#E6EFF9" stroke="#C3D9EE" stroke-width="1"/>
+    <text x="237" y="269.5" text-anchor="middle">Go</text>
+    <rect x="280" y="250" width="86" height="30" rx="15" fill="#E6EFF9" stroke="#C3D9EE" stroke-width="1"/>
+    <text x="323" y="269.5" text-anchor="middle">CI / CD</text>
+    <rect x="378" y="250" width="176" height="30" rx="15" fill="#E6EFF9" stroke="#C3D9EE" stroke-width="1"/>
+    <text x="466" y="269.5" text-anchor="middle">Browser Automation</text>
+    <rect x="566" y="250" width="108" height="30" rx="15" fill="#E6EFF9" stroke="#C3D9EE" stroke-width="1"/>
+    <text x="620" y="269.5" text-anchor="middle">Agent Ops</text>
+  </g>
+</svg>
