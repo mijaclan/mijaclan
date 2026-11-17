@@ -73,7 +73,7 @@
 
 **🐱 My GitHub Data** 
 
-> 📦 ? Used in GitHub's Storage 
+> 📦 15.5 kB Used in GitHub's Storage 
  > 
 > 🏆 334 Contributions in the Year 2026
  > 
@@ -81,7 +81,7 @@
  > 
 > 📜 31 Public Repositories 
  > 
-> 🔑 0 Private Repositories 
+> 🔑 12 Private Repositories 
  > 
 **I'm an Early 🐤** 
 
@@ -141,6 +141,6 @@ Rust                     1 repo              █░░░░░░░░░░�
 
 
 
- Last Updated on 17/11/2026 07:09:35 UTC
+ Last Updated on 17/11/2026 07:29:34 UTC
 <!--END_SECTION:waka-->
 
