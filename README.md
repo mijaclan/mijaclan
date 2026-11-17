@@ -138,7 +138,7 @@ Run anmol098/waka-readme-stats@master
   <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=mijaclan&theme=github" alt="GitHub 统计总览" />
 </p>
 
-<sub>↓ 下面这段由 GitHub Actions 每天自动抓 WakaTime 生成，人工零干预——包括它给我统计出我是个早鸟这件事。</sub>
+<sub>👇 下面这段由 GitHub Actions 每天自动抓 WakaTime 生成，人工零干预——包括它给我统计出我是个早鸟这件事。</sub>
 
 <!--START_SECTION:waka-->
 ![Code Time](http://img.shields.io/badge/Code%20Time-706%20hrs%2026%20mins-blue?style=flat)
@@ -161,9 +161,7 @@ Run anmol098/waka-readme-stats@master
 
 ## 🎲 一点不正经的
 
-<p align="center">
-  <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark" alt="dev quote" />
-</p>
+> 正事说完了，剩下是废话。
 
 <details>
 <summary>👀 点开看几句碎碎念</summary>
