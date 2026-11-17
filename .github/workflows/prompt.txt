@@ -36,3 +36,24 @@ anmol098/waka-readme-stats#691。
 **顺带**：`📦 Used in GitHub's Storage` 显示 `?`，是 `GH_TOKEN` 缺少 `user` scope
 （上游文档已注明）；需要正确数值就给该 PAT 补上 `user` scope。
 
+---
+
+## 2026-11-17 版面调整：只保留"有故事"的指标
+
+README 首屏改成内容/互动优先，数据放最后，所以自动段的输入开关也一起收了：
+
+| 开关 | 值 | 原因 |
+| :--- | :--- | :--- |
+| `SHOW_TOTAL_CODE_TIME` | True | 累计编码时长，唯一像样的总量指标 |
+| `SHOW_COMMIT` | True | 早鸟/夜猫子分布，有人格属性 |
+| `SHOW_DAYS_OF_WEEK` | False | 周一 17% vs 周日 16%，没有信息量 |
+| `SHOW_SHORT_INFO` | False | 会把「仓库占用 15.6 kB」「未开放招聘」印上去 |
+| `SHOW_PROFILE_VIEWS` | False | 访问量个位数，露怯 |
+| `SHOW_LANGUAGE_PER_REPO` | False | 「JavaScript 8 个仓库 40%」并不能说明会什么 |
+| `SHOW_LANGUAGE/EDITORS/PROJECTS/OS/TIMEZONE` | False | 本周没数据时会印一堆 `No Activity Tracked This Week` |
+| `SHOW_AI_CODING` | False | 同上，没有 AI 编码数据时整块是空的 |
+
+注：这一组开关里任意一个为 True，action 才会输出 "This Week I Spent My Time On" 大块；
+全关时整块不渲染，所以不会留下空标题。
+
+
