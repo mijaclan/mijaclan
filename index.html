@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mijaclan — 把红着的流水线救回来</title>
+<meta name="description" content="白天给产品写功能，晚上给 agent 派活。后端与基础设施，最常干的活是把一条红着的 CI 救回来。">
+<meta name="theme-color" content="#EEF0EA">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="mijaclan — 把红着的流水线救回来">
+<meta property="og:description" content="白天给产品写功能，晚上给 agent 派活。后端与基础设施。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%208%208'%3E%3Crect%20width%3D'8'%20height%3D'8'%20fill%3D'%2314191C'%2F%3E%3Crect%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3Crect%20x%3D'4'%20y%3D'2'%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3Crect%20x%3D'2'%20y%3D'4'%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3Crect%20x%3D'6'%20y%3D'4'%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3Crect%20y%3D'6'%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3Crect%20x%3D'4'%20y%3D'6'%20width%3D'2'%20height%3D'2'%20fill%3D'%231F6FEB'%2F%3E%3C%2Fsvg%3E"><rect width='8' height='8' fill='%2314191C'/><rect width='2' height='2' fill='%231F6FEB'/><rect x='4' y='2' width='2' height='2' fill='%231F6FEB'/><rect x='2' y='4' width='2' height='2' fill='%231F6FEB'/><rect x='6' y='4' width='2' height='2' fill='%231F6FEB'/><rect y='6' width='2' height='2' fill='%231F6FEB'/><rect x='4' y='6' width='2' height='2' fill='%231F6FEB'/></svg>">
+<style>
+  :root{
+    --paper:#EEF0EA;
+    --paper-2:#E6EAE3;
+    --ink:#14191C;
+    --ink-2:#39423F;
+    --mute:#5E6762;
+    --rule:rgba(20,25,28,.14);
+    --blue:#1F6FEB;
+    --blue-ink:#1552B8;
+    --tint:#C9D8F2;
+    --red:#A93A32;
+    --green:#2C6B4A;
+
+    --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    --mono:ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Noto Sans Mono", monospace;
+
+    --gut:24px;
+    --measure:720px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink-2);
+    font-family:var(--sans);
+    font-size:16.5px;
+    line-height:1.78;
+    letter-spacing:.004em;
+  }
+  canvas{image-rendering:pixelated; image-rendering:crisp-edges;}
+  b,strong{color:var(--ink); font-weight:650}
+
+  a{color:var(--blue-ink); text-decoration:none; border-bottom:1px solid rgba(21,82,184,.35)}
+  a:hover{border-bottom-color:var(--blue-ink)}
+  :focus-visible{outline:2px solid var(--blue); outline-offset:3px}
+  ::selection{background:rgba(31,111,235,.18); color:var(--ink)}
+  @media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+
+  .wrap{width:100%; max-width:var(--measure); margin:0 auto; padding:0 var(--gut)}
+
+  /* ---------- 首屏 ---------- */
+  .hero{position:relative; overflow:hidden; padding:78px 0 64px; background:var(--paper)}
+  .hero canvas.wash{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:block; z-index:0; pointer-events:none;
+  }
+  .hero .wrap{position:relative; z-index:1}
+
+  .sig{
+    display:block; width:clamp(226px, 45vw, 392px); height:auto;
+    margin:0 0 30px -6px;
+  }
+
+  .lead{
+    margin:0 0 18px;
+    font-size:clamp(19px, 2.5vw, 22px);
+    line-height:1.72;
+    color:var(--ink);
+    max-width:34em;
+  }
+  .sub{margin:0; max-width:36em}
+
+  .status{
+    margin:30px 0 0;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.9;
+    color:var(--mute);
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  }
+  .status i{
+    width:8px; height:8px; background:var(--green); display:inline-block;
+    flex:none; transform:translateY(-1px);
+  }
+
+  .actions{margin:34px 0 0; display:flex; gap:12px; flex-wrap:wrap}
+
+  .btn{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.02em;
+    padding:10px 16px;
+    color:var(--paper);
+    background:var(--ink);
+    border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--blue);
+    transition:none;
+  }
+  .btn:hover{background:var(--blue); border-color:var(--blue); box-shadow:4px 4px 0 var(--ink); color:#fff}
+  .btn:active{transform:translate(4px,4px); box-shadow:0 0 0 var(--ink)}
+  .btn.ghost{background:transparent; color:var(--ink); box-shadow:none}
+  .btn.ghost:hover{background:rgba(20,25,28,.07); border-color:var(--ink); color:var(--ink); box-shadow:none}
+  .btn.ghost:active{transform:translate(2px,2px); box-shadow:none}
+
+  /* ---------- 章节 ---------- */
+  main{padding-bottom:24px}
+  section{padding:56px 0; border-top:1px solid var(--rule)}
+  h2{
+    margin:0 0 8px;
+    font-size:clamp(22px, 3vw, 27px);
+    line-height:1.4;
+    letter-spacing:-.01em;
+    color:var(--ink);
+  }
+  .h2note{margin:0 0 28px; color:var(--mute); font-size:15px; max-width:38em}
+
+  /* 清单：点线分隔，不用卡片 */
+  ol.ledger{list-style:none; margin:0; padding:0; border-top:1px solid var(--rule)}
+  ol.ledger li{
+    display:grid; grid-template-columns:8.8rem 1fr; gap:22px;
+    padding:15px 0; border-bottom:1px solid var(--rule);
+  }
+  ol.ledger .k{
+    font-family:var(--mono); font-size:12.5px; line-height:1.9;
+    color:var(--blue-ink); letter-spacing:.01em;
+  }
+  ol.ledger .v{color:var(--ink-2)}
+
+  /* 三件事 */
+  .cases{display:grid; gap:0}
+  .case{padding:24px 0; border-bottom:1px solid var(--rule)}
+  .case:last-child{border-bottom:0}
+  .case h3{
+    margin:0 0 8px; font-size:17.5px; line-height:1.6; color:var(--ink);
+    letter-spacing:-.005em;
+  }
+  .case p{margin:0 0 12px; max-width:38em}
+  .res{
+    margin:0 0 6px; font-size:14px; line-height:1.8;
+    color:var(--ink-2); display:flex; gap:9px; align-items:baseline;
+  }
+  .res:last-child{margin-bottom:0}
+  .res i{width:7px;height:7px;flex:none;display:inline-block;background:var(--green);transform:translateY(-1px)}
+  .res.bad i{background:var(--red)}
+  .res .tag{
+    font-family:var(--mono); font-size:11px; color:var(--mute);
+    flex:none; letter-spacing:.04em; transform:translateY(-1px);
+  }
+  .res .txt{flex:1}
+
+  /* 流水线 */
+  ol.pipe{list-style:none; margin:4px 0 0; padding:0}
+  ol.pipe li{
+    position:relative; display:grid; grid-template-columns:30px 1fr; gap:16px;
+    padding:0 0 22px;
+  }
+  ol.pipe li:last-child{padding-bottom:0}
+  ol.pipe li:not(:last-child)::before{
+    content:""; position:absolute; left:14px; top:26px; bottom:4px;
+    width:2px; background:rgba(20,25,28,.18);
+  }
+  ol.pipe .n{
+    width:30px; height:30px; flex:none;
+    display:grid; place-items:center;
+    border:2px solid var(--ink); background:var(--paper);
+    font-family:var(--mono); font-size:12px; color:var(--ink);
+  }
+  ol.pipe li.mine .n{border-color:var(--blue); color:var(--blue-ink)}
+  ol.pipe h3{margin:0 0 2px; font-size:16.5px; color:var(--ink); font-weight:650; line-height:1.75}
+  ol.pipe p{margin:0; font-size:15.5px; color:var(--mute); max-width:40em}
+
+  .rules{
+    margin:30px 0 0; padding:16px 0 0; border-top:1px solid var(--rule);
+    font-size:15.5px; color:var(--ink-2);
+  }
+  .rules b{color:var(--ink)}
+
+  /* ---------- 数据 ---------- */
+  .chart{width:100%; border-collapse:collapse; margin:6px 0 0}
+  .chart caption{
+    text-align:left; font-family:var(--mono); font-size:12px; color:var(--mute);
+    padding:0 0 12px; letter-spacing:.01em;
+  }
+  .chart td{padding:6px 0; vertical-align:middle}
+  .chart .lab{
+    font-size:14.5px; color:var(--ink-2); white-space:nowrap; padding-right:16px;
+    width:6.6rem; text-align:left; font-weight:400;
+  }
+  .chart .lab span{color:var(--mute); font-family:var(--mono); font-size:11.5px; margin-left:6px}
+  .chart .val{
+    font-family:var(--mono); font-size:13px; color:var(--ink); text-align:right;
+    width:3.6rem; padding-right:14px; white-space:nowrap;
+  }
+  .chart .bar{width:100%; height:24px; display:block; background:#DCE0D7}
+  .chart tr.hot .val{color:var(--blue-ink)}
+
+  .nums{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:1px; margin:34px 0 0; padding:0; background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .nums div{background:var(--paper); padding:16px 18px}
+  .nums dt{font-family:var(--mono); font-size:11.5px; color:var(--mute); line-height:1.9}
+  .nums dd{
+    margin:2px 0 0; font-family:var(--mono); font-size:clamp(22px,3.4vw,26px);
+    line-height:1.3; color:var(--ink); letter-spacing:-.02em;
+  }
+  .nums dd small{font-size:12px; color:var(--mute); letter-spacing:0; margin-left:3px}
+  .nums dd.sm{font-size:19px; letter-spacing:0}
+
+  .src{margin:16px 0 0; font-size:13.5px; color:var(--mute); font-family:var(--mono); line-height:1.9}
+
+  /* ---------- 玩一下 ---------- */
+  .peek{
+    border:2px solid var(--ink); background:var(--paper);
+    box-shadow:5px 5px 0 rgba(20,25,28,.2);
+    margin:0 0 20px;
+  }
+  .peek summary{
+    cursor:pointer; list-style:none; padding:13px 16px;
+    font-size:15.5px; color:var(--ink); font-weight:600;
+    display:flex; align-items:center; gap:10px;
+  }
+  .peek summary::-webkit-details-marker{display:none}
+  .peek summary::before{
+    content:"+"; font-family:var(--mono); font-size:15px; color:var(--blue-ink);
+    width:14px; flex:none; text-align:center;
+  }
+  .peek[open] summary::before{content:"–"}
+  .peek summary:hover{background:rgba(20,25,28,.04)}
+  .peek .body{padding:2px 18px 18px 40px; font-size:15.5px}
+  .peek .body p{margin:0 0 10px}
+  .peek .body p:last-child{margin-bottom:0}
+  .peek .note{font-size:13px; color:var(--mute); line-height:1.8}
+
+  .quiz{
+    border:2px solid var(--ink); background:var(--paper);
+    box-shadow:5px 5px 0 rgba(20,25,28,.2);
+    padding:0 0 18px; margin:0 0 28px;
+  }
+  .quiz .head{
+    padding:11px 16px; border-bottom:1px solid var(--rule);
+    font-family:var(--mono); font-size:12px; color:var(--mute);
+  }
+  .quiz pre{
+    margin:0; padding:14px 16px; overflow-x:auto;
+    font-family:var(--mono); font-size:12px; line-height:1.85;
+    color:var(--ink-2); background:var(--paper-2);
+    border-bottom:1px solid var(--rule);
+  }
+  .quiz .q{padding:16px 16px 10px; margin:0; font-size:15.5px; color:var(--ink); font-weight:600}
+  .opts{display:grid; gap:8px; padding:0 16px}
+  .opts button{
+    font-family:var(--sans); font-size:15px; line-height:1.6; text-align:left;
+    padding:10px 13px; cursor:pointer;
+    background:var(--paper); color:var(--ink-2);
+    border:1px solid rgba(20,25,28,.3); border-radius:0;
+  }
+  .opts button:hover{background:rgba(20,25,28,.05); border-color:var(--ink)}
+  .opts button[disabled]{cursor:default}
+  .opts button.ok{background:rgba(44,107,74,.1); border-color:var(--green); color:var(--ink)}
+  .opts button.no{background:rgba(169,58,50,.08); border-color:var(--red); color:var(--ink)}
+  .opts button.shake{animation:jitter .16s steps(2) 2}
+  @keyframes jitter{0%{transform:translateX(-2px)}100%{transform:translateX(2px)}}
+  .ans{
+    margin:14px 16px 0; padding:12px 14px; background:var(--paper-2);
+    border-left:3px solid var(--blue); font-size:15px; color:var(--ink-2);
+  }
+  .ans[hidden]{display:none}
+
+  .links{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px}
+  .links a{
+    font-family:var(--mono); font-size:12.5px; padding:9px 13px;
+    border:1px solid rgba(20,25,28,.3); color:var(--ink-2); background:var(--paper);
+  }
+  .links a:hover{border-color:var(--ink); color:var(--ink); background:rgba(20,25,28,.04)}
+
+  /* ---------- 页脚 ---------- */
+  footer{border-top:1px solid var(--rule); padding:40px 0 60px}
+  .foot{
+    display:flex; justify-content:space-between; gap:18px; align-items:baseline;
+    flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--mute);
+  }
+  .foot a{color:var(--ink); border-bottom:1px solid rgba(20,25,28,.35)}
+
+  @media (max-width:620px){
+    :root{--gut:20px}
+    .hero{padding:56px 0 46px}
+    section{padding:44px 0}
+    ol.ledger li{grid-template-columns:1fr; gap:2px; padding:13px 0}
+    ol.ledger .k{font-size:12px}
+    .chart .lab{width:auto; padding-right:10px; font-size:13.5px}
+    .chart .lab span{display:none}
+    .nums{grid-template-columns:1fr 1fr}
+    .peek .body{padding-left:18px}
+    .quiz pre{font-size:11px}
+    .foot{flex-direction:column; gap:8px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <canvas class="wash" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <img class="sig" src="assets/signature.svg" alt="mijaclan 的手写签名">
+    <p class="lead">白天给产品写功能，晚上给 agent 派活。这两件事的共同点是：<b>最后都得有人签字</b>。</p>
+    <p class="sub">主力在后端和基础设施，最常干的活是把一条红着的流水线救回来。不写框架、不追新语法，偏好能跑、能测、能复现的东西。判断标准只有一条——这活能不能被验收。</p>
+    <p class="status"><i></i><span>此刻：在给一个跑了很久的仓库做减法</span><span>·</span><span>上海</span></p>
+    <div class="actions">
+      <a class="btn" href="#work">看我在修什么</a>
+      <a class="btn ghost" href="https://github.com/mijaclan">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="now">
+    <div class="wrap">
+      <h2>现在</h2>
+      <p class="h2note">三件事同时在跑，都不是新项目。</p>
+      <ol class="ledger">
+        <li><span class="k">仓库做减法</span><span class="v">能删的依赖删掉，能交给机器的交给机器。跑了很久的仓库最容易长出一身没人敢动的配置。</span></li>
+        <li><span class="k">把 agent 塞进日常</span><span class="v">读日志、翻上游 issue、开浏览器点一遍界面；我只负责判断和签字。</span></li>
+        <li><span class="k">写排障笔记</span><span class="v">每次翻车都留一条能复现的路径，下次不用从零开始猜。</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <h2>干过的几件小事</h2>
+      <p class="h2note">共同点：报错信息都在说谎，或者说了一半真话。</p>
+      <div class="cases">
+        <article class="case">
+          <h3>一条天天红的 CI</h3>
+          <p>上游把 API Key 降级成只写，读取统计必须换 OAuth。Key 本身没坏，写还照常写，只有读被拦——所以报错里那句 "only for plugins" 是唯一线索。</p>
+          <p class="res"><i></i><span class="tag">处理</span><span class="txt">没换 Key 重试，而是加了道凭证预检：跑前先探一次，探不通直接给人话。</span></p>
+          <p class="res"><i></i><span class="tag">结果</span><span class="txt">两分钟的 Python traceback 变成五秒的中文提示。</span></p>
+        </article>
+        <article class="case">
+          <h3>一个返 202 的接口</h3>
+          <p>不是没数据，是统计还在算。上游用 202 表示「已接受、稍后给你」，客户端把它当成了空结果。</p>
+          <p class="res"><i></i><span class="tag">处理</span><span class="txt">改成轮询等待，最多十二次，每次十秒。</span></p>
+          <p class="res"><i></i><span class="tag">结果</span><span class="txt">周报再没出现过半空的表格。</span></p>
+        </article>
+        <article class="case">
+          <h3>一个只能靠人点鼠标改的配置</h3>
+          <p>平台没有 API，只有后台表单。每次改都要人肉登录、找菜单、填字段，还容易点错。</p>
+          <p class="res"><i></i><span class="tag">处理</span><span class="txt">交给 agent 按固定路径点，点完回读页面校验一遍。</span></p>
+          <p class="res"><i></i><span class="tag">结果</span><span class="txt">省下的时间拿去写测试，这才是它该待的地方。</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="agent">
+    <div class="wrap">
+      <h2>我怎么和 agent 分工</h2>
+      <p class="h2note">它不是我的助手，是我雇的一个不用睡觉的侦察兵。判断权始终在我这边。</p>
+      <ol class="pipe">
+        <li class="mine"><span class="n">1</span><div><h3>我提目标</h3><p>要解决什么、验收标准是什么，先说清楚。说不清就先别派活。</p></div></li>
+        <li><span class="n">2</span><div><h3>它去侦察</h3><p>读日志、翻上游 issue 和 changelog、开浏览器把界面点一遍，把原始输出带回来。</p></div></li>
+        <li><span class="n">3</span><div><h3>它给证据，不是给结论</h3><p>「我觉得是权限问题」没用。要么有那一行报错，要么有那个响应头。</p></div></li>
+        <li class="mine"><span class="n">4</span><div><h3>我判断、签字</h3><p>改什么、不改什么，出事了算谁的——这部分不外包。</p></div></li>
+      </ol>
+      <p class="rules">规矩三条：<b>结论带证据</b>；只读的随便跑，写入的先问我；同一个坑不踩第二次，踩了就写进笔记。</p>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="wrap">
+      <h2>工具箱</h2>
+      <p class="h2note">不追新版本号，够用就不动。</p>
+      <ol class="ledger">
+        <li><span class="k">语言</span><span class="v">Go、Java、TypeScript、Python、Rust——写得最多的是 Go。</span></li>
+        <li><span class="k">后端</span><span class="v">Spring Boot、FastAPI、Node。接口先定下来，框架能换就换。</span></li>
+        <li><span class="k">数据</span><span class="v">PostgreSQL、Redis、MySQL。够用就不加中间件。</span></li>
+        <li><span class="k">运维</span><span class="v">Docker、Kubernetes、GitHub Actions。流水线自己写，红了自己修。</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="data">
+    <div class="wrap">
+      <h2>数据</h2>
+      <p class="h2note">数字放在后面是有原因的：它不会骗人，但它也不会解释自己。</p>
+
+      <table class="chart">
+        <caption>commit 落在一天里的哪一段 · 共 2833 次</caption>
+        <tbody>
+          <tr class="hot">
+            <th class="lab" scope="row">早上<span>5–9</span></th>
+            <td class="val">47.2%</td>
+            <td><canvas class="bar" data-pct="47.23" data-hot="1" aria-hidden="true"></canvas></td>
+          </tr>
+          <tr>
+            <th class="lab" scope="row">白天<span>9–18</span></th>
+            <td class="val">10.0%</td>
+            <td><canvas class="bar" data-pct="10.02" aria-hidden="true"></canvas></td>
+          </tr>
+          <tr>
+            <th class="lab" scope="row">傍晚<span>18–22</span></th>
+            <td class="val">5.9%</td>
+            <td><canvas class="bar" data-pct="5.93" aria-hidden="true"></canvas></td>
+          </tr>
+          <tr>
+            <th class="lab" scope="row">深夜<span>22–2</span></th>
+            <td class="val">36.8%</td>
+            <td><canvas class="bar" data-pct="36.82" aria-hidden="true"></canvas></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">WakaTime 每日自动抓取 · 706 小时 26 分 · 上次更新 2026-11-17</p>
+
+      <dl class="nums">
+        <div><dt>连续提交</dt><dd>1310<small>天</small></dd></div>
+        <div><dt>总贡献</dt><dd>1463<small>次</small></dd></div>
+        <div><dt>早上七点在线</dt><dd>47<small>%</small></dd></div>
+        <div><dt>最常用工具</dt><dd class="sm">git log<small>+ curl</small></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="play">
+    <div class="wrap">
+      <h2>玩一下</h2>
+      <p class="h2note">三十秒能玩完。玩完顺手 star 一下也不算亏。</p>
+
+      <details class="peek">
+        <summary>猜猜我一天几点写代码？</summary>
+        <div class="body">
+          <p>47% 的 commit 留在早上七点前后，剩下的大头在深夜十一点。下午？下午通常在跟人说话、开会，或者假装在开会。</p>
+          <p class="note">数据来自上面那块自动统计，不是我自己编的。</p>
+        </div>
+      </details>
+
+      <div class="quiz" id="quiz">
+        <div class="head">$ run anmol098/waka-readme-stats@master</div>
+<pre>  raise Exception("Something went wrong")
+{"error": "API Keys are only for plugins,
+           use your personal oauth token instead."}</pre>
+        <p class="q">这条流水线为什么天天红？</p>
+        <div class="opts">
+          <button type="button" data-ok="0">A. token 过期了</button>
+          <button type="button" data-ok="0">B. 仓库权限没给够</button>
+          <button type="button" data-ok="1">C. 服务方把 API Key 降级成只写，读取统计必须改用 OAuth</button>
+        </div>
+        <p class="ans" hidden><b>C。</b>最坑的地方是 Key 本身没坏：写还照常写，只有读被拦。所以别急着换 Key 重试——先看看那半句 "only for plugins"。</p>
+      </div>
+
+      <div class="links">
+        <a href="https://github.com/mijaclan/mijaclan/issues/new?title=%F0%9F%90%9B%20%E6%88%91%E6%8C%91%E5%88%B0%E4%B8%80%E6%A0%B9%E5%88%BA&body=%E5%9C%A8%E5%93%AA%E4%B8%80%E5%9D%97%E7%9C%8B%E5%88%B0%E7%9A%84%EF%BC%9A%0A%0A%E6%88%91%E7%9C%8B%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A%E5%BB%BA%E8%AE%AE%E6%80%8E%E4%B9%88%E6%94%B9%EF%BC%9A%0A">🐛 挑个刺</a>
+        <a href="https://github.com/mijaclan/mijaclan/issues/new?title=%F0%9F%92%A1%20%E6%88%91%E6%9C%89%E4%B8%AA%E6%83%B3%E6%B3%95&body=%E6%83%B3%E8%A6%81%E7%9A%84%E5%8A%9F%E8%83%BD%EF%BC%9A%0A%0A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A7%89%E5%BE%97%E6%9C%89%E7%94%A8%EF%BC%9A%0A">💡 提个需求</a>
+        <a href="https://github.com/mijaclan/mijaclan/issues/new?title=%F0%9F%91%8B%20%E8%B7%AF%E8%BF%87%E6%89%93%E4%B8%AA%E6%8B%9B%E5%91%BC&body=%E4%BD%A0%E6%9C%80%E8%BF%91%E5%9C%A8%E6%8A%98%E8%85%BE%E4%BB%80%E4%B9%88%EF%BC%9A%0A">👋 打个招呼</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>看到这儿了，说明你比 90% 的访客有耐心。</span>
+    <span><a href="https://github.com/mijaclan">Follow</a> · <a href="https://github.com/mijaclan/mijaclan">点个 Star</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var BAYER = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function rgb(hex){
+    var h = hex.replace("#","");
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+
+  /* 首屏：Bayer 抖动出来的底色，没有一处平滑渐变 */
+  function paintWash(cv){
+    var box = cv.getBoundingClientRect();
+    var CELL = 4;
+    var w = Math.max(8, Math.floor(box.width / CELL));
+    var h = Math.max(8, Math.floor(box.height / CELL));
+    cv.width = w; cv.height = h;
+    var ctx = cv.getContext("2d");
+    var img = ctx.createImageData(w, h);
+    var paper = rgb("#EEF0EA"), tint = rgb("#D7E1F4"), deep = rgb("#A9C4EC");
+
+    for (var y = 0; y < h; y++){
+      for (var x = 0; x < w; x++){
+        var ny = y / (h - 1), nx = x / (w - 1);
+        // 顶部浓、往下散；左边略重，右边收窄 —— 像一道斜插进来的晨光
+        var d = Math.pow(1 - ny, 2.1) * (0.30 + 0.55 * (1 - nx));
+        if (ny > 0.72) d *= Math.max(0, 1 - (ny - 0.72) / 0.28);
+        var t = (BAYER[y & 3][x & 3] + 0.5) / 16;
+        var c = paper;
+        if (d > t) c = (d - t > 0.22) ? deep : tint;
+        var i = (y * w + x) * 4;
+        img.data[i] = c[0]; img.data[i+1] = c[1]; img.data[i+2] = c[2]; img.data[i+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  /* 数据条：长度编码数值，纹理也由抖动生成 */
+  function paintBar(cv){
+    var pct = parseFloat(cv.getAttribute("data-pct")) || 0;
+    var hot = cv.getAttribute("data-hot") === "1";
+    var box = cv.getBoundingClientRect();
+    if (!box.width) return;
+    var CELL = 4;
+    var w = Math.max(8, Math.floor(box.width / CELL));
+    var h = Math.max(3, Math.round(box.height / CELL));
+    cv.width = w; cv.height = h;
+    var ctx = cv.getContext("2d");
+    var img = ctx.createImageData(w, h);
+    var ink = rgb(hot ? "#1F6FEB" : "#222B2E");
+    var bg  = rgb("#E3E6DF");
+    var filled = Math.round(w * pct / 100);
+
+    for (var y = 0; y < h; y++){
+      for (var x = 0; x < w; x++){
+        var t = (BAYER[y & 3][x & 3] + 0.5) / 16;
+        var c = bg;
+        if (x < filled){
+          var edge = filled - x;
+          var dens = Math.min(1, edge / Math.max(6, w * 0.055));
+          if (dens > t) c = ink;
+        }
+        var i = (y * w + x) * 4;
+        img.data[i] = c[0]; img.data[i+1] = c[1]; img.data[i+2] = c[2]; img.data[i+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  function repaint(){
+    var wash = document.querySelector("canvas.wash");
+    if (wash) paintWash(wash);
+    Array.prototype.forEach.call(document.querySelectorAll("canvas.bar"), paintBar);
+  }
+
+  repaint();
+  var t;
+  window.addEventListener("resize", function(){
+    clearTimeout(t); t = setTimeout(repaint, 160);
+  });
+
+  /* 那道真题 */
+  var quiz = document.getElementById("quiz");
+  if (quiz){
+    var btns = quiz.querySelectorAll(".opts button");
+    var ans = quiz.querySelector(".ans");
+    Array.prototype.forEach.call(btns, function(b){
+      b.addEventListener("click", function(){
+        if (b.getAttribute("data-ok") === "1"){
+          b.classList.add("ok");
+          ans.hidden = false;
+          Array.prototype.forEach.call(btns, function(o){
+            o.disabled = true;
+            if (o !== b) o.style.opacity = ".55";
+          });
+        } else {
+          b.classList.remove("no");
+          void b.offsetWidth;
+          b.classList.add("no", "shake");
+          if (!reduce) setTimeout(function(){ b.classList.remove("shake"); }, 380);
+        }
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
