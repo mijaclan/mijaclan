@@ -2,7 +2,37 @@
 参考项目：https://github.com/anmol098/waka-readme-stats
 
 1. 修改wakatime key： setting > Action
-2. 官网获取最新token key： https://wakatime.com/settings/account
+2. 读取统计数据用的 token 到 https://wakatime.com/oauth 获取（OAuth Access Token）；
+   https://wakatime.com/settings/account 里的 API Key 只给编辑器插件上报用，两者不通用
 
 github token 在profile下修改和获取
+
+---
+
+## 2026-11-17 排障记录：README 从 10-31 起不再更新
+
+**现象**：每天定时任务都失败（2m08s 后 failed），README 里的统计停在
+`Last Updated on 31/10/2026`。
+
+**报错**（job 日志末尾）：
+
+```
+Exception: Query 'https://wakatime.com/api/v1/users/current/stats/all_time?api_key=***'
+failed to run by returning code of 403:
+{'error': 'API Keys are only for plugins, use your personal oauth token instead.'}
+```
+
+**原因**：WakaTime 自 2026-11-01 起把 API Key 收紧为「只写」，只允许编辑器插件上报
+数据，读取统计的接口（`/users/current/stats/*`）一律返回 403。上游对应 issue：
+anmol098/waka-readme-stats#691。
+
+**修复**：不用改 workflow，也不用改 secret 的名字，只换 secret 的值。
+
+1. 打开 https://wakatime.com/oauth ，生成 Personal OAuth Access Token 并复制。
+2. 仓库 Settings → Secrets and variables → Actions → 更新 `WAKATIME_API_KEY`
+   的值（粘贴上面的 OAuth Token）。
+3. Actions → Waka Readme → Run workflow 手动跑一次验证。
+
+**顺带**：`📦 Used in GitHub's Storage` 显示 `?`，是 `GH_TOKEN` 缺少 `user` scope
+（上游文档已注明）；需要正确数值就给该 PAT 补上 `user` scope。
 

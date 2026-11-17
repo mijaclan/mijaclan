@@ -2,17 +2,66 @@ name: Waka Readme
 
 on:
   schedule:
-    # Runs at 12am IST
+    # 每天 18:30 UTC = 北京时间次日 02:30
     - cron: '30 18 * * *'
   workflow_dispatch:
+
+# 显式声明最小权限：action 需要用 token 把生成的内容提交回本仓库
+permissions:
+  contents: write
+
+# 定时任务与手动触发不要同时跑，否则两次 push 会互相覆盖
+concurrency:
+  group: waka-readme
+  cancel-in-progress: false
+
 jobs:
   update-readme:
     name: Update Readme with Metrics
     runs-on: ubuntu-latest
     steps:
+      # WakaTime 自 2026-11-01 起把 API Key 收紧为“只写”（只给编辑器插件上报用），
+      # 读取统计数据的接口一律返回 403:
+      #   {"error":"API Keys are only for plugins, use your personal oauth token instead."}
+      # 所以下面的 WAKATIME_API_KEY 里必须放 https://wakatime.com/oauth 生成的
+      # 个人 OAuth Access Token，而不是 https://wakatime.com/settings/account 的 API Key。
+      # secret 的名字不用改，只换值即可。
+      - name: Preflight - check WakaTime credential
+        env:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+        run: |
+          set -uo pipefail
+
+          if [ -z "${WAKATIME_API_KEY}" ]; then
+            echo "::error::仓库 secret WAKATIME_API_KEY 未设置。请到 https://wakatime.com/oauth 生成 OAuth Access Token 后填入。"
+            exit 1
+          fi
+
+          # 用与 action 完全相同的请求形式（api_key 查询参数）预检，避免误判
+          code=$(curl -sS -o /tmp/waka.json -w '%{http_code}' \
+                 "https://wakatime.com/api/v1/users/current/stats/all_time?api_key=${WAKATIME_API_KEY}" \
+                 || echo 000)
+
+          if [ "${code}" = "200" ]; then
+            echo "WakaTime 凭证校验通过。"
+            exit 0
+          fi
+
+          echo "WakaTime 返回 HTTP ${code}，响应："
+          head -c 500 /tmp/waka.json 2>/dev/null || true
+          echo
+          if [ "${code}" = "403" ]; then
+            echo "::error::WakaTime 拒绝了该凭证（403）。自 2026-11-01 起 API Key 仅限插件使用，请到 https://wakatime.com/oauth 生成个人 OAuth Access Token，并更新 secret WAKATIME_API_KEY 的值（secret 名不用改）。"
+          elif [ "${code}" = "401" ]; then
+            echo "::error::WakaTime 凭证无效或已过期（401）。请重新到 https://wakatime.com/oauth 生成 Access Token 并更新 secret WAKATIME_API_KEY。"
+          else
+            echo "::error::WakaTime 预检失败（HTTP ${code}），详见上方响应体。"
+          fi
+          exit 1
+
       - uses: anmol098/waka-readme-stats@master
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           # 时间线
-          SHOW_LOC_CHART: False
+          SHOW_LOC_CHART: "False"
