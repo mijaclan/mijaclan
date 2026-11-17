@@ -44,7 +44,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL 18" />
-  <img src="https://img.shields.io/badge/Redis-7.x-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis" />
+  <img src="https://img.shields.io/badge/Redis-8.x-DC382D?style=flat-square&logo=redis&logoColor=white" alt="Redis 8.x" />
   <img src="https://img.shields.io/badge/MongoDB-9.0-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB 9.0" />
   <img src="https://img.shields.io/badge/MySQL-9.7-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL 9.7" />
   <img src="https://img.shields.io/badge/Docker-29-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
