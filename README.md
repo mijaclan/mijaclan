@@ -1,11 +1,13 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg">
-  <img src="assets/banner-light.svg" alt="mijaclan — 我不生产代码，我只是 AI 的甲方" width="100%">
-</picture>
+<p align="center">
+  <img src="assets/signature.svg" width="430" alt="mijaclan" />
+</p>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=19&pause=1100&color=1F6FEB&center=true&vCenter=true&width=660&lines=%E5%88%AB%E4%BA%BA%E5%8A%A0%E7%8F%AD%EF%BC%8C%E6%88%91%E5%8A%A0+agent;%E5%AE%83%E8%B7%91%E8%85%BF%EF%BC%8C%E6%88%91%E6%8B%8D%E6%9D%BF;%E5%85%88%E8%B7%91%E9%80%9A%EF%BC%8C%E5%86%8D%E4%BC%98%E9%9B%85;AI+%E5%B9%B2%E6%B4%BB%EF%BC%8C%E6%88%91%E8%83%8C%E9%94%85%EF%BC%88%E4%B8%8D%E6%98%AF%EF%BC%89" alt="typing" />
+</p>
+
+<p align="center">
+  <img src="https://count.getloli.com/get/@mijaclan?theme=rule34" alt="visitors" />
 </p>
 
 <p align="center">
