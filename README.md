@@ -10,35 +10,27 @@
   <img src="https://count.getloli.com/get/@mijaclan?theme=rule34" alt="visitors" />
 </p>
 
-<p align="center">
-  <code>🐤 早鸟型选手</code>&nbsp;<code>🧯 CI 拆弹</code>&nbsp;<code>🤖 Agent 派活</code>&nbsp;<code>🌏 Asia/Shanghai</code>
-</p>
+嗨，我是 mijaclan —— 白天给产品写功能，晚上给 agent 派活。两件事的共同点：**最后都得有人签字**。
 
-白天给产品写功能，晚上给 agent 写 prompt。两件事的共同点：**都得能被验收**。
+主力在后端和基础设施，最常干的活是"把一条红着的流水线救回来"。不写框架、不追新语法，偏好能跑、能测、能复现的东西。
 
-我最值钱的技能不是手速，是知道**哪一步该丢给机器、哪一步必须自己签字**。
+判断标准只有一条：**这活能不能被验收。** 能，就交给机器跑；不能，就自己坐下来写完。
 
----
+**现在**
 
-<table>
-<tr>
-<td width="34%" valign="top" align="center">
-<h3>🧯</h3>
-<b>我到底在修什么</b><br>
-<sub>大部分不是自己写的 bug，是上游默默把接口改了、文档一个字没动。</sub>
-</td>
-<td width="33%" valign="top" align="center">
-<h3>🤖</h3>
-<b>我的隐藏副业</b><br>
-<sub>给 agent 派活：读日志、翻仓库、开浏览器、跑验证。它从不抱怨加班。</sub>
-</td>
-<td width="33%" valign="top" align="center">
-<h3>⚡</h3>
-<b>我的迷信</b><br>
-<sub>能跑就别动。要动先写测试。写完测试再想优雅。</sub>
-</td>
-</tr>
-</table>
+- 给一个跑了很久的仓库做减法：能删的依赖删掉，能交给机器的交给机器
+- 把 agent 塞进日常：读日志、翻上游 issue、开浏览器点一遍，我负责判断和签字
+- 写自己的排障笔记，每次翻车都留一条能复现的路径
+
+**干过的几件小事**
+
+- 一条天天红的 CI —— 上游把 API Key 降级成只写；加了凭证预检，两分钟的 traceback 变成五秒的中文报错
+- 一个返 202 的接口 —— 不是没数据，是统计还在算；改成轮询等待，周报再没半空过
+- 一个只能靠人点鼠标改的配置 —— 交给 agent 去点，省下的时间拿去写测试
+
+规矩就三条：结论带证据、只读的随便跑写入的先问我、同一个坑不踩第二次。
+
+日常的鼓捣对象：Claude Code / Cursor / DeepSeek / Ollama，外挂一个 MCP。
 
 ---
 
@@ -100,39 +92,6 @@ Run anmol098/waka-readme-stats@master
 </table>
 
 </details>
-
----
-
-## 🤖 我怎么用 agent（这才是重点）
-
-我不把它当"高级补全"，当一个**能自己跑起来、会查证据、会写结论的执行者**。
-
-```text
-需求  →  侦察（日志 / 仓库 / 浏览器）  →  方案 + 风险  →  我签字  →  改 + 验证  →  留证据
-```
-
-分工是死的：**它跑腿，我拍板。** 涉及凭证、线上数据、删东西——一律回到我手上。
-
-**三个真跑过的活儿**（都发生在这仓库或它周边，不是 PPT）：
-
-- **CI 天天红** → 让它读 Actions 日志、判断是代码问题还是上游变了 → 得出"API Key 被降级成只写"这个结论，顺手加了预检：2 分钟的 traceback 变成 5 秒的中文报错。
-- **接口返 202** → 大家以为是"没数据"，它翻文档确认是"统计还在算" → 改成轮询等待，README 再没写出过半空的周报。
-- **浏览器里的破事** → 让它驱动真实浏览器改 secret、审页面渲染 → 省掉手动点击，还揪出三个挂掉的外部组件。
-
-**我的三条规矩**：
-
-1. 结论必须带证据——run id、日志行、截图，缺一样就不算完。
-2. 只读的活随便跑，写入的活先问我。
-3. 每次翻车留一条能复现的路径，同一个坑不踩第二次。
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Claude-D97757?style=flat-square&logo=claude&logoColor=white" alt="Claude" />
-  <img src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white" alt="Cursor" />
-  <img src="https://img.shields.io/badge/GitHub%20Copilot-8957E5?style=flat-square&logo=githubcopilot&logoColor=white" alt="Copilot" />
-  <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=flat-square&logo=langchain&logoColor=white" alt="LangChain" />
-  <img src="https://img.shields.io/badge/Ollama-000000?style=flat-square&logo=ollama&logoColor=white" alt="Ollama" />
-  <img src="https://img.shields.io/badge/MCP-1F6FEB?style=flat-square" alt="MCP" />
-</p>
 
 ---
 
